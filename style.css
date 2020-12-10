@@ -1,0 +1,79 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Bellota', cursive;
+}
+
+body{
+    background-image: url("img/bgBody.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 100vh;
+}
+
+.contener{
+    width: 30vw;
+}
+
+.toy{
+    
+    border-radius: 25px;
+    background: linear-gradient(rgb(194, 17, 17), rgb(230, 65, 65)), url(https://www.toptal.com/designers/subtlepatterns/patterns/white_plaster.png);
+    box-shadow:
+		0 .25em 1em 0 rgba(0,0,0,0.30),
+		inset .25em .25em 1em 0 hsl(360, 88%, 72%),
+		inset .15em .15em .2em 0 hsl(360, 88%, 72%),
+		inset -.25em -.25em 1em 0 hsl(360, 88%, 22%),
+		inset -.15em -.15em .2em 0 hsl(360, 88%, 2%);
+}
+
+#audio1{
+    cursor: pointer;
+}
+
+.startToy{
+    height: 715.5px;
+    border-radius: 25px;
+    background: linear-gradient(rgb(194, 17, 17), rgb(230, 65, 65)), url(https://www.toptal.com/designers/subtlepatterns/patterns/white_plaster.png);
+    box-shadow:
+		0 .25em 1em 0 rgba(0,0,0,0.30),
+		inset .25em .25em 1em 0 hsl(360, 88%, 72%),
+		inset .15em .15em .2em 0 hsl(360, 88%, 72%),
+		inset -.25em -.25em 1em 0 hsl(360, 88%, 22%),
+		inset -.15em -.15em .2em 0 hsl(360, 88%, 2%);
+}
+
+.content{
+    margin: 30px 30px ;
+    background-color: rgb(80, 14, 14);
+    max-width: 900px;
+}
+
+.miniImg{
+    margin-top: 10px;
+}
+
+img{
+    border: 1px solid rgb(105, 23, 23);
+    transition: 1s; 
+    z-index: 1;
+}
+
+img:hover{
+    transform: scale(1.3); 
+}
+
+.img{
+    /* background: url("https://source.unsplash.com/900x900/?christmas,holiday,festive"); */
+    display: inline-block;
+    height: 0;
+    border: 1px solid rgb(105, 23, 23);
+}
+
+
+.footer a, .footer a:hover{
+    text-decoration: none;
+    list-style-type: none;
+    color: white;
+}

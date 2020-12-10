@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="icon" href="img/favicon-32x32.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bellota:wght@700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+<div class="container justify-content-center">
+
+    <div class="row justify-content-center mt-4">
+        <div class="col-6 toy" hidden >
+            
+                <div class="row pt-2 title">
+                    <div class="col-9 text-center m-auto text-white">
+                        <div class="row">
+                            <div class = 'col-2 text-white' id = 'audio1'>
+                                <svg width="1.5em" height="1.5em" viewBox="0 0 16 16" class="bi bi-music-note-beamed" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M6 13c0 1.105-1.12 2-2.5 2S1 14.105 1 13c0-1.104 1.12-2 2.5-2s2.5.896 2.5 2zm9-2c0 1.105-1.12 2-2.5 2s-2.5-.895-2.5-2 1.12-2 2.5-2 2.5.895 2.5 2z"></path>
+                                    <path fill-rule="evenodd" d="M14 11V2h1v9h-1zM6 3v10H5V3h1z"></path>
+                                    <path d="M5 2.905a1 1 0 0 1 .9-.995l8-.8a1 1 0 0 1 1.1.995V3L5 4V2.905z"></path>
+                                </svg>
+                            </div>
+                            <div class="col-10 text-left pl-5">
+                                <h4>Собери картинку</h4>
+                            </div>
+                        </div>
+                        
+                        <p>Колличество ходов <span id="moves">0</span></p>
+                        
+                        <button type="button" class="btn btn-outline-light btn-sm" id="newGame">Перемешать</button>
+                        <button type="button" class="btn btn-outline-light ml-2 btn-sm" id="newComb">Заново</button>
+                        <button type="button" class="btn btn-outline-light ml-2 btn-sm" id="newStart">Новая игра</button>
+                    </div>
+                    <div class="col-3 logo text-left miniImg pl-0"> <img class="img-fluid" id='userMiniImg' src="img/ng.jpg" alt="" ></div>
+                </div>
+
+                <div class="row">
+                    <div class="col content"></div>
+                </div>
+
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="startToy text-white col-6">
+            <div class="row justify-content-center my-5">
+                <div class="col-8 text-center">
+                    <h1>Пятнашки</h1>
+                    <p>Твоя задача собрать картинку, передвигая плашки только на свободное место</p>
+                </div>           
+            </div>
+            <div class="row justify-content-center my-3">
+                <div class="col-8 text-center">
+                    <h5>Выбери размер поля</h5> 
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-outline-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span id='sizePoint'>3 X 3</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#" id ='sizeThree'>3 X 3</a>
+                            <a class="dropdown-item" href="#" id ="sizeFour">4 X 4</a>
+                            <a class="dropdown-item" href="#" id ="sizeFife">5 X 5</a>
+                            <a class="dropdown-item" href="#" id ="sizeSix">6 X 6</a>
+                        </div>
+                    </div>
+                </div>           
+            </div>
+            <div class="row mt-5 text-white justify-content-center my-3">
+                <div class="col-6 text-center">
+                <p>А еще ты можешь загрузить свою картинку и собирать её</p>
+                </div>
+                <div class="col-6">
+                        <div class="input-group py-2 text-left">
+                            <div class="custom-file"> 
+                                <input type="file" class="custom-file-input" id="imgInp" >
+                                <label class="custom-file-label" data-browse= "Обзор">Выбери файл</label>
+                            </div>           
+                        </div>
+                </div>
+            </div>
+
+
+            <div class="row justify-content-center my-3 text-white">
+                <button type="button" class="btn btn-outline-light" id='audio'>
+                    <span id = 'auOnOff'>Включить музыку</span> 
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-music-note-beamed" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6 13c0 1.105-1.12 2-2.5 2S1 14.105 1 13c0-1.104 1.12-2 2.5-2s2.5.896 2.5 2zm9-2c0 1.105-1.12 2-2.5 2s-2.5-.895-2.5-2 1.12-2 2.5-2 2.5.895 2.5 2z"></path>
+            <path fill-rule="evenodd" d="M14 11V2h1v9h-1zM6 3v10H5V3h1z"></path>
+            <path d="M5 2.905a1 1 0 0 1 .9-.995l8-.8a1 1 0 0 1 1.1.995V3L5 4V2.905z"></path>
+                    </svg>
+                    </button>
+            </div>
+            <div class="row justify-content-center my-3 text-white">
+                <div class="col-8 text-center">
+                    
+                    <button type="button" class="btn btn-outline-light" id="start">Начать игру</button>
+                    
+                </div>           
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row footer justify-content-center">
+        <div class="col-6 text-center px-0">
+            <a href="https://github.com/okslisina">&copy; 2020 Oksana Lisina </a>
+        </div>
+    </div>
+</div>
+    
+
+
+<!-- <audio controls src="audio.mp3"loop></audio> -->
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <!-- JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous">
+    </script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous">
+    </script>
+    <script async src="script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.js"></script>
+</body>
+</html>
