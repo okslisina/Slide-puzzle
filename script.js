@@ -9,9 +9,9 @@ let sizeFour = document.querySelector("#sizeFour");
 let sizeFife = document.querySelector("#sizeFife");
 let sizeSix = document.querySelector("#sizeSix");
 
-let newGames = document.querySelector("#newGame");
-let newComb = document.querySelector("#newComb");
-let newStart = document.querySelector("#newStart");
+let shuffleEl = document.querySelector("#shuffle");
+let restartEl = document.querySelector("#restart");
+let newGameEl = document.querySelector("#newGame");
 
 let imgInp = document.querySelector("input");
 let start = document.querySelector("#start");
@@ -23,22 +23,48 @@ let playing = false; // текущее состояние плеера
 let player = new Audio('audio.mp3');
 player.preload = "auto";
 
-let randomSave = [];
 let url = "img/ng.jpg";
 
 
 class AllTilesClass {
-    emptyTile = 0;  //тут будет храниться индекс пустой клетки в массике поля tilesArray
+    emptyTilePos = 0;  //тут будет храниться индекс пустой клетки в массиве поля tilesArray
     tilesArray = [];
+    randomSave = [];
     numMoves = 0;  //кол-во ходов
 
     constructor() {
+        this.newBoard();
         this.tiles = Array.from(document.querySelectorAll(".img"));
         //заполняем массив поля от 0 до 8
         for (let i = 0; i < size * size; i++) {
             this.tilesArray.push(i);
         }
     }
+
+    //рисуем поле по заданному размеру
+    newBoard() {
+        for (let i = 0; i < size; i++) {
+            
+            let divRow = document.createElement("div");
+            divRow.className = 'row';
+            
+            for (let j = 0; j < size; j++) {
+                let divCol = document.createElement("button");
+                divRow.appendChild (divCol);
+                divCol.className = 'col img';
+                divCol.id = 'tile' + (i * size + j);
+                divCol.style.backgroundPosition = this.computeBGByCoord(i, j);
+                divCol.style.backgroundImage = "url(" + url + ")";
+                divCol.style.paddingBottom = 100/size + '%';
+                divCol.style.opacity = '1';
+                divCol.style.backgroundSize = size * 100 + '%';
+            }
+            document.querySelector(".content").appendChild(divRow);
+        }
+        let emptyTileHTML= document.querySelector('#tile' + (size * size - 1));
+        emptyTileHTML.style.opacity = '0';
+    }
+
     //метод отрисовки плашек
     render() {
         //присваиваем стили к плашкам на поле соответсвенно перестановкам в массиве поля tilesArray
@@ -46,29 +72,30 @@ class AllTilesClass {
             tile.style.backgroundPosition = this.computeBGByIndex(this.tilesArray[index]);
             tile.style.opacity = '1';
         });
-        this.tiles[this.emptyTile].style.opacity = '0';
+        this.tiles[this.emptyTilePos].style.opacity = '0';
     }
+
     //метод для смешивания плашек
     random() {
-        //рандомим массив с позициями плашек
+        //фунция для перемешивания плашек
         const shuffledKeys = () => { 
             this.tilesArray.sort(function(){
                 return Math.random() - 0.5;
             });
         };
-        //проверяем на собираемойсть полученную комбинацию смешения
+        //перемешиваем до тех пор пока не получим собираемую комбинацию
         do {
             shuffledKeys();  
-            randomSave = [...this.tilesArray];
+            this.randomSave = [...this.tilesArray];
         }      
         while (this.inversionCount(this.tilesArray) % 2 == 1 || this.inversionCount(this.tilesArray) == 0) 
         //записываем позицию пустой клетки 
-        this.emptyTile = this.tilesArray.indexOf(size * size - 1);
+        this.emptyTilePos = this.tilesArray.indexOf(size * size - 1);
         this.render();
         this.unlockTiles();
     }
 
-    // метод проверки на выйгрышь
+    // метод проверки на выигрышь
     isComplete() {
         //проверяем отсортирован ли попорядку масссив tilesArray
         const isWin = this.tilesArray.reduce((isWin, tile, index) => {
@@ -82,7 +109,7 @@ class AllTilesClass {
             const noBorder = this.tiles 
             .forEach(tile => {
                 tile.style.border = 'none';
-                this.tiles[this.emptyTile].style.opacity = '1';
+                this.tiles[this.emptyTilePos].style.opacity = '1';
                 document.activeElement.blur();
                 tile.disabled = true;
             });      
@@ -92,15 +119,15 @@ class AllTilesClass {
     //  Метод замены выбранной плашки и пустой
     change(event) {
         let tile = event.target;
-        //записываем позицию клетки, на кот нажали (берем клас и ищем индекс в массиве)
-        let currentTile = +tile.id.replace('tile', '');
+        //записываем позицию клетки, на кот нажали
+        let currentTilePos = +tile.id.replace('tile', '');
         
-        //меняем значения нажатой плашк и пустой в массиве номеров полей 
-        let tmp = this.tilesArray[currentTile];
-        this.tilesArray[currentTile] = this.tilesArray[this.emptyTile];
-        this.tilesArray[this.emptyTile] = tmp;
+        //меняем значения нажатой плашки и пустой в массиве номеров полей 
+        let tmp = this.tilesArray[currentTilePos];
+        this.tilesArray[currentTilePos] = this.tilesArray[this.emptyTilePos];
+        this.tilesArray[this.emptyTilePos] = tmp;
         //присваиваем новый номер пустой клетки
-        this.emptyTile = currentTile;
+        this.emptyTilePos = currentTilePos;
         this.render();
         this.unlockTiles();
         this.isComplete();
@@ -110,13 +137,13 @@ class AllTilesClass {
         document.querySelector("#moves").innerHTML = this.numMoves;
         
     }
-    // метод разлокировки и блокировки нужных плашек относительно пустой
+    // метод разблокировки и блокировки активных плашек относительно пустой
     unlockTiles () {
         // перебираем плашки и берем их индексы, сравниваем с индексом пустой и разблокируем и блокируем по формуле
         this.tiles.forEach((tile, index) => {
-            if ((index == this.emptyTile + 1 && this.emptyTile % size != size - 1) || 
-            (index == this.emptyTile - 1 && this.emptyTile % size != 0) || 
-            index == this.emptyTile + size || index == this.emptyTile - size) {
+            if ((index == this.emptyTilePos + 1 && this.emptyTilePos % size != size - 1) || 
+            (index == this.emptyTilePos - 1 && this.emptyTilePos % size != 0) || 
+            index == this.emptyTilePos + size || index == this.emptyTilePos - size) {
                 tile.disabled = false;
             } else {
                 tile.disabled = true;
@@ -124,15 +151,15 @@ class AllTilesClass {
         });
     }
 
-    // метод для математического расчета правильности комбинации
+    // метод подсчёта перестановок (комбинация имеет решение, если это число чётное)
     inversionCount(array) {
 	// Использование функции reduce для просмотра всех элементов в массиве
-    // Каждый элемент в массиве проверяется на все, что было до него на налчие значение меньше
-    // Возвращаем массиы со всеми этими значениями, кол-во эл-тов этого должно быть нечетным
+    // Для каждого элемента массива считается количество элементов стоящих после него и меньше него (число перестановок для элемента)
+    // Возвращаем общее число перестановок
         return array.reduce((accumulator, current, index, array) => {
 
                 let add = 0;
-                if (current == size * size -1) { //если встретилась пустая клетка возращаем номер её строчки если четное size, иначе возвращаем 0
+                if (current == size * size -1) { //если встретилась пустая клетка и size чётное, то записываем номер её строки
                     if (size % 2 == 0) {
                         add = Math.floor(index / size);
                     } 
@@ -148,7 +175,7 @@ class AllTilesClass {
         }
 
     //запуск новой игры
-    newGame() {
+    shuffle() {
         this.numMoves = 0;
         document.querySelector("#moves").innerHTML = this.numMoves;
 
@@ -164,13 +191,13 @@ class AllTilesClass {
     }
 
     //запуск заново той же комбинации
-    reset() {
+    restart() {
         this.numMoves = 0;
         document.querySelector("#moves").innerHTML = this.numMoves;
         document.querySelector("h4").innerHTML = "Собери картинку";
         
-        this.tilesArray = [...randomSave];
-        this.emptyTile = this.tilesArray.indexOf(size * size - 1);
+        this.tilesArray = [...this.randomSave];
+        this.emptyTilePos = this.tilesArray.indexOf(size * size - 1);
         this.render();
         this.unlockTiles();
 
@@ -183,7 +210,7 @@ class AllTilesClass {
     }
 
     //функция возврата на главный экран для новоц игры
-    newStarting() {
+    newGame() {
         document.querySelector(".startToy").removeAttribute('hidden');
         document.querySelector(".toy").setAttribute('hidden','');
         document.querySelector(".content").innerHTML = '';
@@ -197,7 +224,12 @@ class AllTilesClass {
         
     //функция расчёта позиций бэкраунда 
     computeBGByIndex(index) {
-        return computeBGByCoord(Math.floor(index / size), index % size);
+        return this.computeBGByCoord(Math.floor(index / size), index % size);
+    }
+    
+    //функция расчёта позиции бэкграунда 
+    computeBGByCoord(i, j) {
+        return j * 100 / (size - 1) + '% ' + i * 100 / (size - 1) + '%';
     }
 }
 
@@ -219,7 +251,6 @@ function mainFun() {
     
     document.querySelector(".startToy").setAttribute('hidden','');
     document.querySelector(".toy").removeAttribute('hidden');
-    newBoard();
 
     //Создаем экземпляр класса AllTilesClass
     const AllTiles = new AllTilesClass();
@@ -227,18 +258,18 @@ function mainFun() {
     //привязываем this для функций к объекту
     let random = AllTiles.random.bind(AllTiles);
     let change = AllTiles.change.bind(AllTiles);
+    let shuffle = AllTiles.shuffle.bind(AllTiles);
+    let restart = AllTiles.restart.bind(AllTiles);
     let newGame = AllTiles.newGame.bind(AllTiles);
-    let reset = AllTiles.reset.bind(AllTiles);
-    let newStarting = AllTiles.newStarting.bind(AllTiles);
 
     //запускаем функцию рандом чеpез 1 с после загрузки страницы
     setTimeout(random, 1000); 
 
-    newGames.addEventListener("click", newGame);
-    newComb.addEventListener("click", reset);
-    newStart.addEventListener("click", newStarting);
+    shuffleEl.addEventListener("click", shuffle);
+    restartEl.addEventListener("click", restart);
+    newGameEl.addEventListener("click", newGame);
     
-    //"слушаем" каждую плашечку на нажатие и запускаем смену картинки
+    //"слушаем" каждую плашку на нажатие и запускаем смену картинки
     AllTiles.tiles.forEach(tile => {
         tile.addEventListener("click", change);
     });
@@ -259,35 +290,6 @@ function playPause() {
         au1.classList.add('text-white');
     }
     playing = !playing;
-}
-
-
-//рисуем поле по заданному размеру
-function newBoard() {
-    for (let i = 0; i < size; i++) {
-        
-        let divRow = document.createElement("div");
-        divRow.className = 'row';
-        
-        for (let j = 0; j < size; j++) {
-            let divCol = document.createElement("button");
-            divRow.appendChild (divCol);
-            divCol.className = 'col img';
-            divCol.id = 'tile' + (i * size + j);
-            divCol.style.backgroundPosition = computeBGByCoord(i, j);
-            divCol.style.backgroundImage = "url(" + url + ")";
-            divCol.style.paddingBottom = 100/size + '%';
-            divCol.style.opacity = '1';
-            divCol.style.backgroundSize = size * 100 + '%';
-        }
-        document.querySelector(".content").appendChild(divRow);
-    }
-    let emptyTileHTML= document.querySelector('#tile' + (size * size - 1));
-    emptyTileHTML.style.opacity = '0';
-}
-//функция расчёта позиции бэкграунда 
-function computeBGByCoord(i, j) {
-    return j * 100 / (size - 1) + '% ' + i * 100 / (size - 1) + '%';
 }
 
 // Функция загрузки собственного файла
@@ -329,18 +331,6 @@ function sizeChoice (event) {
         default:    
             size = 3;
     }        
-}
-
-//функция возврата на главный экран для новоц игры
-function newStarting() {
-    document.querySelector(".startToy").removeAttribute('hidden');
-    document.querySelector(".toy").setAttribute('hidden','');
-    document.querySelector(".content").innerHTML = '';
-    url = "img/ng.jpg";
-    userMiniImg.setAttribute('src', url);
-    imgInp.value = "";
-    document.querySelector(".custom-file-label").innerHTML = 'Выбери файл';
-    this.numMoves = 0;
 }
 
 
